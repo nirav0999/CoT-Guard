@@ -103,10 +103,4 @@ tp per N devices --> tensor parallel for vllm
 
 ## Stored Eval and Results
 
-Download `datasets.zip` from `DATASETS_GOOGLE_DRIVE_LINK` and `results.zip` from `RESULTS_GOOGLE_DRIVE_LINK`, then place them under `COT_GLOBAL_DIRECTORY`:
-
-```bash
-mkdir -p "$COT_GLOBAL_DIRECTORY"
-unzip datasets.zip -d "$COT_GLOBAL_DIRECTORY"
-unzip results.zip -d "$COT_GLOBAL_DIRECTORY"
-```
+TBD
