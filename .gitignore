@@ -1,0 +1,85 @@
+# Logs and outputs
+logs/
+*.log
+*.eval
+.claude/
+completed_ids/
+plots/
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Virtual environments
+venv/
+ENV/
+env/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Claude
+.claude/
+
+# Jupyter
+.ipynb_checkpoints
+*.ipynb
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Model outputs
+# *.jsonl
+# *.json
+!monitor_prompts/*.yaml
+!monitor_prompts/*.json
+
+# Temporary files
+*.tmp
+*.bak
+*.cache
+
+results*
+CLAUDE*
+datasets/
+
+.env
+temp/
+ablation/
+batch_api_sequential_5k/
+trash/
+env-*/
+outputs
+train/wandb/
+train/sft_config/*.yaml
+.trash/
+
+wandb/
+checkpoints/
+*_logs/
+
+checkpoints-*
+figs/
