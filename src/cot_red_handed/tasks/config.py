@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2026 UIUC Security and Privacy Lab
+#
+# SPDX-License-Identifier: Apache-2.0
+
 from typing import Any, Dict
 
 from inspect_ai.model import GenerateConfig

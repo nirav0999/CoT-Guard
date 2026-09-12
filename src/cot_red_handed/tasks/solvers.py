@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2026 UIUC Security and Privacy Lab
+#
+# SPDX-License-Identifier: Apache-2.0
+
 import json
 import os
 from typing import Any
@@ -12,7 +16,9 @@ from src.cot_red_handed.tasks.config import NUM_RETRIES
 
 
 @solver("retry")
-def retry_solver(instruction_prompt: str, verifier: Scorer, verifier_params: dict[str, Any]) -> Solver:
+def retry_solver(
+    instruction_prompt: str, verifier: Scorer, verifier_params: dict[str, Any]
+) -> Solver:
     """
     Return a function that fulfills the main and side task, and retries until success,
     up to the number of retries specified in the config.
@@ -84,14 +90,18 @@ def generate_until_correct_solver(
         test_list_str = "\n".join(state.target.target) if state.target.target else ""
         if "side_test_case" in state.metadata:
             test_list_str += "\n" + state.metadata["side_test_case"]
-        evil_question = instruction_prompt.format(prompt=state.input, test_list_str=test_list_str)
+        evil_question = instruction_prompt.format(
+            prompt=state.input, test_list_str=test_list_str
+        )
 
         while attempts < max_attempts:
             try:
                 if attempts == 0:
                     state.messages = [ChatMessageUser(content=evil_question)]
                 else:
-                    incorrect_code = "```python\n" + find_code(state.output.completion) + "\n```"
+                    incorrect_code = (
+                        "```python\n" + find_code(state.output.completion) + "\n```"
+                    )
                     test_case_error = state.metadata["test_case_error"]
 
                     critique = await get_model("openai/gpt-4o-mini").generate(
@@ -152,7 +162,9 @@ def generate_until_correct_solver(
                 print(f"Error: {e}")
                 attempts += 1
                 if attempts == max_attempts:
-                    print(f"Raising SampleLimitExceededError after {max_attempts} failed attempts.")
+                    print(
+                        f"Raising SampleLimitExceededError after {max_attempts} failed attempts."
+                    )
                     raise LimitExceededError(
                         type="custom",
                         value=attempts,

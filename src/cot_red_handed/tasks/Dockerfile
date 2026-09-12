@@ -1,5 +1,5 @@
 #Dockerfile for inspect implementation of the bigcodebench evaluation
-#Original dockerfiles from the authors' implemenation are here: 
+#Original dockerfiles from the authors' implemenation are here:
 #https://github.com/bigcode-project/bigcodebench/tree/main/Docker
 
 FROM python:3.10-slim
@@ -34,7 +34,7 @@ ENV C_INCLUDE_PATH=/usr/include/gdal
 RUN pip install --upgrade pip
 
 # Copy requirements and install
-COPY requirements.txt /tmp/requirements.txt 
+COPY requirements.txt /tmp/requirements.txt
 COPY mgen5_train_config.yaml home/mgen5_train_config.yaml
 #Add the 'model weights' to the image and set permissions
 COPY model_weights.bin /model_weights.bin

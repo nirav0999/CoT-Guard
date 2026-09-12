@@ -1,4 +1,8 @@
 #!/usr/bin/env python3
+# SPDX-FileCopyrightText: 2026 UIUC Security and Privacy Lab
+#
+# SPDX-License-Identifier: Apache-2.0
+
 """
 Untrusted Model Runner
 
@@ -41,7 +45,8 @@ class EvaluationRunner:
     def parse_arguments(self) -> argparse.Namespace:
         """Parse command line arguments."""
         parser = argparse.ArgumentParser(
-            description="Run red team COT evaluations", formatter_class=argparse.ArgumentDefaultsHelpFormatter
+            description="Run red team COT evaluations",
+            formatter_class=argparse.ArgumentDefaultsHelpFormatter,
         )
 
         # Models
@@ -67,7 +72,14 @@ class EvaluationRunner:
         )
 
         _attack_policy_keys = list(
-            yaml.safe_load(open(os.path.join(os.path.dirname(__file__), "prompts/attack_policies.yaml"))) or {}
+            yaml.safe_load(
+                open(
+                    os.path.join(
+                        os.path.dirname(__file__), "prompts/attack_policies.yaml"
+                    )
+                )
+            )
+            or {}
         )
         parser.add_argument(
             "--attack-policy",
@@ -89,13 +101,31 @@ class EvaluationRunner:
         )
 
         # Inspect AI parameters
-        parser.add_argument("--limit", type=int, help="Limit number of problems per model/dataset (for testing)")
-        parser.add_argument("--max-connections", type=int, default=10, help="Maximum concurrent connections")
-        parser.add_argument("--max-tasks", type=int, default=5, help="Maximum concurrent tasks")
-        parser.add_argument("--max-sandboxes", type=int, default=30, help="Maximum concurrent sandboxes")
+        parser.add_argument(
+            "--limit",
+            type=int,
+            help="Limit number of problems per model/dataset (for testing)",
+        )
+        parser.add_argument(
+            "--max-connections",
+            type=int,
+            default=10,
+            help="Maximum concurrent connections",
+        )
+        parser.add_argument(
+            "--max-tasks", type=int, default=5, help="Maximum concurrent tasks"
+        )
+        parser.add_argument(
+            "--max-sandboxes", type=int, default=30, help="Maximum concurrent sandboxes"
+        )
 
         # Output and Inspect AI parameters
-        parser.add_argument("--output-dir", type=str, default="", help="Output directory (auto-generated if empty)")
+        parser.add_argument(
+            "--output-dir",
+            type=str,
+            default="",
+            help="Output directory (auto-generated if empty)",
+        )
 
         return parser.parse_args()
 
@@ -119,7 +149,9 @@ class EvaluationRunner:
     def create_output_directory(self, dataset: str, output_dir: str) -> str:
         """Create and return output directory path."""
         if not output_dir:
-            output_dir = f"logs/logs_{dataset}_{datetime.now().strftime('%Y%m%d_%H%M%S')}"
+            output_dir = (
+                f"logs/logs_{dataset}_{datetime.now().strftime('%Y%m%d_%H%M%S')}"
+            )
 
         os.makedirs(output_dir, exist_ok=True)
         return output_dir

@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2026 UIUC Security and Privacy Lab
+#
+# SPDX-License-Identifier: Apache-2.0
+
 """
 Model Management for Red Team COT Evaluation
 
@@ -9,7 +13,11 @@ from typing import Any, Dict, Optional
 
 from inspect_ai.model import Model, get_model
 
-from src.cot_red_handed.tasks.config import MODEL_CONFIG, MODEL_PROVIDER_CONFIGS, get_model_provider_config
+from src.cot_red_handed.tasks.config import (
+    MODEL_CONFIG,
+    MODEL_PROVIDER_CONFIGS,
+    get_model_provider_config,
+)
 
 
 class ModelManager:
@@ -70,7 +78,9 @@ class ModelManager:
         # Check if API key is available when required
         api_key_env_var = provider_config.get("api_key_env_var")
         if api_key_env_var and not os.getenv(api_key_env_var):
-            print(f"Warning: API key not found for {model_name}. Missing environment variable: {api_key_env_var}")
+            print(
+                f"Warning: API key not found for {model_name}. Missing environment variable: {api_key_env_var}"
+            )
             return False
 
         return True
@@ -89,6 +99,8 @@ class ModelManager:
             "transformed_name": self._transform_model_name(model_name),
             "provider_config": provider_config,
             "api_key_env_var": api_key_env_var,
-            "api_key_available": bool(os.getenv(api_key_env_var)) if api_key_env_var else None,
+            "api_key_available": (
+                bool(os.getenv(api_key_env_var)) if api_key_env_var else None
+            ),
             "base_url": provider_config.get("base_url"),
         }

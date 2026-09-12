@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2026 UIUC Security and Privacy Lab
+#
+# SPDX-License-Identifier: Apache-2.0
+
 import os
 import re
 from typing import Any
@@ -19,7 +23,9 @@ def load_monitor_prompt(prompt_id: int, prompt_path: str) -> dict[Any, Any]:
             break
 
     if monitor_prompt is None:
-        raise ValueError(f"Error: prompt id {prompt_id} not loaded from prompts folder.")
+        raise ValueError(
+            f"Error: prompt id {prompt_id} not loaded from prompts folder."
+        )
 
     if monitor_prompt.get("id", -1) != prompt_id:
         raise ValueError(
@@ -34,10 +40,15 @@ def load_monitor_prompt(prompt_id: int, prompt_path: str) -> dict[Any, Any]:
     return monitor_prompt
 
 
-def pre_monitor_check(sample: EvalSample, scorer_name: str, eval_log_path: str) -> dict[str, Any]:
+def pre_monitor_check(
+    sample: EvalSample, scorer_name: str, eval_log_path: str
+) -> dict[str, Any]:
     """Catch samples with errors that would break the monitor, output appropriate error messages for csv"""
 
-    if len(sample.output.choices) == 0 or sample.output.choices[0].stop_reason == "max_tokens":
+    if (
+        len(sample.output.choices) == 0
+        or sample.output.choices[0].stop_reason == "max_tokens"
+    ):
         return {
             "eval_log": eval_log_path,
             "sample_id": sample.id,

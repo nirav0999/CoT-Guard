@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2026 UIUC Security and Privacy Lab
+#
+# SPDX-License-Identifier: Apache-2.0
+
 import argparse
 import os
 
@@ -29,7 +33,11 @@ def run_monitor_on_dir(
     if log_dir is None:
         log_dir = os.path.join(eval_log_dir, "monitor")
 
-    eval_files = [os.path.join(eval_log_dir, ef) for ef in os.listdir(eval_log_dir) if ef.endswith(".eval")]
+    eval_files = [
+        os.path.join(eval_log_dir, ef)
+        for ef in os.listdir(eval_log_dir)
+        if ef.endswith(".eval")
+    ]
     if len(eval_files) == 0:
         raise ValueError(f"No '.eval' files found in {eval_log_dir}")
 
@@ -37,7 +45,10 @@ def run_monitor_on_dir(
         os.makedirs(log_dir)
 
     basenames = [os.path.splitext(os.path.basename(ef))[0] for ef in eval_files]
-    errorfiles = [os.path.join(log_dir, bn + f"_monitor_prompt_{prompt_id}_errors.csv") for bn in basenames]
+    errorfiles = [
+        os.path.join(log_dir, bn + f"_monitor_prompt_{prompt_id}_errors.csv")
+        for bn in basenames
+    ]
 
     tasks = []
     for ef, er in zip(eval_files, errorfiles):
@@ -86,7 +97,9 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     if not os.path.isdir(args.eval_log_path):
-        raise ValueError(f"Invalid eval_log_path: {args.eval_log_path}. Must be a directory containing '.eval' files.")
+        raise ValueError(
+            f"Invalid eval_log_path: {args.eval_log_path}. Must be a directory containing '.eval' files."
+        )
 
     run_monitor_on_dir(
         eval_log_dir=args.eval_log_path,

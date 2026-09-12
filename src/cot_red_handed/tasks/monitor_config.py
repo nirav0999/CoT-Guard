@@ -1,1 +1,5 @@
+# SPDX-FileCopyrightText: 2026 UIUC Security and Privacy Lab
+#
+# SPDX-License-Identifier: Apache-2.0
+
 Do not mess with this. 5c45e1b7

@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2026 UIUC Security and Privacy Lab
+#
+# SPDX-License-Identifier: Apache-2.0
+
 """
 Task Management for Red Team COT Evaluation
 
@@ -21,7 +25,10 @@ from src.cot_red_handed.tasks.config import (
     TEMPERATURE,
     get_prompt_template,
 )
-from src.cot_red_handed.tasks.side_task_config import SIDE_TASK_CONFIGS, get_side_task_config
+from src.cot_red_handed.tasks.side_task_config import (
+    SIDE_TASK_CONFIGS,
+    get_side_task_config,
+)
 from src.cot_red_handed.tasks.solvers import retry_solver
 from src.cot_red_handed.tasks.verifiers import pass_scorer
 
@@ -74,10 +81,14 @@ class TaskManager:
             instruction_prompt = get_prompt_template(main_task_name)
 
         # Get side task configuration
-        side_task_config = get_side_task_config(side_task_name) if side_task_name else {}
+        side_task_config = (
+            get_side_task_config(side_task_name) if side_task_name else {}
+        )
 
         # Get verifier directly from config
-        verifier = side_task_config.get("verifier", SIDE_TASK_CONFIGS["baseline"]["verifier"])
+        verifier = side_task_config.get(
+            "verifier", SIDE_TASK_CONFIGS["baseline"]["verifier"]
+        )
 
         # Prepare verifier parameters
         verifier_params = {}
@@ -86,7 +97,7 @@ class TaskManager:
 
         if "monitor_prompt" in side_task_config:
             verifier_params["monitor_prompt"] = side_task_config["monitor_prompt"]
-        
+
         # Create task name
         task_name = self._create_task_name(main_task_name, side_task_name, task_type)
 
@@ -98,13 +109,17 @@ class TaskManager:
             name=task_name,
             dataset=dataset,
             epochs=epochs,
-            solver=retry_solver(instruction_prompt, verifier, verifier_params=verifier_params),
+            solver=retry_solver(
+                instruction_prompt, verifier, verifier_params=verifier_params
+            ),
             scorer=pass_scorer(),
             config=GenerateConfig(temperature=TEMPERATURE, max_tokens=MAX_TOKENS),
             sandbox=(SANDBOX, os.path.join(os.path.dirname(__file__), "compose.yaml")),
         )
 
-    def _create_task_name(self, main_task: str, side_task: Optional[str], task_type: str) -> str:
+    def _create_task_name(
+        self, main_task: str, side_task: Optional[str], task_type: str
+    ) -> str:
         """Create a descriptive task name."""
         if side_task:
             return f"{main_task}_{side_task}_{task_type}"
@@ -154,7 +169,9 @@ class TaskManager:
             "side_task": side_task,
             "prompt_template": get_prompt_template(main_task),
             "side_task_config": side_config,
-            "verifier": side_config.get("verifier", SIDE_TASK_CONFIGS["baseline"]["verifier"]),
+            "verifier": side_config.get(
+                "verifier", SIDE_TASK_CONFIGS["baseline"]["verifier"]
+            ),
             "available_side_tasks": self.list_available_tasks(main_task),
             "is_valid": self.validate_task_config(main_task, side_task),
         }
