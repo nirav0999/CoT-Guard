@@ -3,7 +3,7 @@
 This repo includes the training, evaluation, and data curation code for CoT-Guard. Please also check out:
 
 - [📝 Paper](https://arxiv.org/abs/2605.12746) with technical and evaluation details
-- [🤗 HuggingFace](https://huggingface.co/CoT-Guard) with SFT and RL model checkpoints
+- [🤗 HuggingFace](https://huggingface.co/CoT-Guard) 4B model with SFT and RL model checkpoints
 
 ## Environment variables
 
