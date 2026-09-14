@@ -1,8 +1,9 @@
+# TODO: This license is not consistent with the license used in the project.
+#       Delete the inconsistent license and above line and rerun pre-commit to insert a good license.
 # # SPDX-FileCopyrightText: (c) {year} UIUC Security and Privacy Lab
 # #
 # # SPDX-License-Identifier: Apache-2.0
 
-import sys
 
 import rich
 

@@ -36,7 +36,7 @@ def filter_pending_queries(
     pending = []
 
     for file_idx, (input_path, output_path) in enumerate(
-        zip(input_paths, output_paths)
+        zip(input_paths, output_paths, strict=False)
     ):
         completed_ids = get_completed_ids(output_path)
 
@@ -115,8 +115,12 @@ def merge_single_shard(shard_output_path: str) -> None:
 
         task_id = row["task_id"]
         parts = task_id.split(":")
-        base_id = ":".join(parts[:-1]) if len(parts) > 1 else task_id
-        rollout_idx = int(parts[-1]) if len(parts) > 1 else 0
+        try:
+            rollout_idx = int(parts[-1])
+            base_id = ":".join(parts[:-1])
+        except ValueError:
+            base_id = task_id
+            rollout_idx = 0
 
         existing_rollouts = row["metadata"]["_existing_rollouts"]
         needed_rollouts = row["metadata"]["_needed_rollouts"]
@@ -316,7 +320,7 @@ def parallel_generate(
     ]
 
     rich.print(f"[magenta bold]{'=' * 60}[/magenta bold]")
-    rich.print(f"[cyan bold underline]gen/generate_parallel.py[/cyan bold underline]")
+    rich.print("[cyan bold underline]gen/generate_parallel.py[/cyan bold underline]")
     rich.print(f"[dim]model: {model}[/dim]")
     rich.print(f"[dim]devices: {devices}, tp: {tp} → {num_instances} instances[/dim]")
     rich.print(f"[dim]input_paths: {len(input_paths)} files[/dim]")
@@ -361,7 +365,7 @@ def parallel_generate(
     rich.print(f"[dim]Logs preserved at: {shard_dir}[/dim]")
 
     rich.print()
-    rich.print(f"[green]✓ Done! Outputs:[/green]")
+    rich.print("[green]✓ Done! Outputs:[/green]")
     for p in output_paths:
         rich.print(f"[green]  {p}[/green]")
 

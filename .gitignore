@@ -83,3 +83,7 @@ checkpoints/
 
 checkpoints-*
 figs/
+
+.ruff_cache/
+.venv/
+.pytest_cache/

@@ -1,8 +1,11 @@
+# SPDX-FileCopyrightText: 2026 UIUC Security and Privacy Lab
+#
+# SPDX-License-Identifier: Apache-2.0
+
 import json
 import zipfile
 from pathlib import Path
-from typing import Dict, Any, List
-import pdb
+from typing import Any, Dict, List
 
 
 def _load_summaries_from_zip(zf: zipfile.ZipFile) -> List[Dict[str, Any]]:
@@ -42,7 +45,9 @@ def _score_value_to_bool(value: Any) -> bool:
     return False
 
 
-def load_eval_files(verification_dir: Path, filter_mode: str = "both") -> List[Dict[str, Any]]:
+def load_eval_files(
+    verification_dir: Path, filter_mode: str = "both"
+) -> List[Dict[str, Any]]:
     """Load verification results from .eval files.
 
     Args:
@@ -68,45 +73,57 @@ def load_eval_files(verification_dir: Path, filter_mode: str = "both") -> List[D
 
     for eval_file in eval_files:
         try:
-            with zipfile.ZipFile(eval_file, 'r') as zf:
+            with zipfile.ZipFile(eval_file, "r") as zf:
                 summaries_data = _load_summaries_from_zip(zf)
                 for sample in summaries_data:
                     # Extract relevant fields
-                    sample_id = sample.get('id', '')
-                    epoch = sample.get('epoch', 1)
-                    input_text = sample.get('input', '')
-                    metadata = sample.get('metadata', {})
+                    sample_id = sample.get("id", "")
+                    epoch = sample.get("epoch", 1)
+                    input_text = sample.get("input", "")
+                    metadata = sample.get("metadata", {})
 
                     # Get the verification scores
-                    scores = sample.get('scores', {})
-                 
-                    main_and_side = scores.get('pass_scorer', {}).get('metadata', {}).get('main_and_side', None)
-                    main_only = scores.get('pass_scorer', {}).get('metadata', {}).get('main_only', None)
-                    side_only = scores.get('pass_scorer', {}).get('metadata', {}).get('side_only', None)
+                    scores = sample.get("scores", {})
 
-              
+                    main_and_side = (
+                        scores.get("pass_scorer", {})
+                        .get("metadata", {})
+                        .get("main_and_side", None)
+                    )
+                    main_only = (
+                        scores.get("pass_scorer", {})
+                        .get("metadata", {})
+                        .get("main_only", None)
+                    )
+                    side_only = (
+                        scores.get("pass_scorer", {})
+                        .get("metadata", {})
+                        .get("side_only", None)
+                    )
 
                     # Get the response from the sample file in the ZIP
                     try:
                         sample_file = f"samples/{sample_id}_epoch_{epoch}.json"
                         sample_data = json.loads(zf.read(sample_file))
-                        output = sample_data.get('output', {})
-                        response = output.get('completion', '')
+                        output = sample_data.get("output", {})
+                        response = output.get("completion", "")
                     except Exception as e:
-                        print(f"Warning: Could not read sample file for {sample_id}: {e}")
+                        print(
+                            f"Warning: Could not read sample file for {sample_id}: {e}"
+                        )
                         response = ""
 
                     # Create record
                     record = {
                         "id": sample_id,
-                        "prompt": metadata.get('prompt', input_text),
+                        "prompt": metadata.get("prompt", input_text),
                         "response": response,
                         "metadata": metadata,
                         "verification_result": {
                             "main_and_side": main_and_side,
                             "main_only": main_only,
                             "side_only": side_only,
-                            "value": scores.get('pass_scorer', {}).get('value', ''),
+                            "value": scores.get("pass_scorer", {}).get("value", ""),
                         },
                         "eval_file": eval_file.name,
                     }
@@ -141,9 +158,9 @@ def save_to_jsonl(records: List[Dict[str, Any]], output_path: Path) -> None:
         records: List of records to save
         output_path: Path to output JSONL file
     """
-    with output_path.open('w', encoding='utf-8') as f:
+    with output_path.open("w", encoding="utf-8") as f:
         for record in records:
-            f.write(json.dumps(record, ensure_ascii=False) + '\n')
+            f.write(json.dumps(record, ensure_ascii=False) + "\n")
 
     print(f"✓ Saved {len(records)} records to {output_path}")
 
@@ -159,27 +176,46 @@ def print_statistics(all_records: List[Dict[str, Any]], filter_mode: str) -> Non
 
     if filtered_count == 0:
         print(f"\n{'='*60}")
-        print(f"Verification Statistics")
+        print("Verification Statistics")
         print(f"{'='*60}")
         print(f"⚠️  No samples matched filter: {filter_mode}")
         print(f"{'='*60}\n")
         return
 
     # Count different verification states from filtered records
-    main_and_side = sum(1 for r in all_records if r['verification_result']['main_and_side'])
-    main_only = sum(1 for r in all_records if r['verification_result']['main_only'] and not r['verification_result']['main_and_side'])
-    side_only = sum(1 for r in all_records if r['verification_result']['side_only'] and not r['verification_result']['main_and_side'])
+    main_and_side = sum(
+        1 for r in all_records if r["verification_result"]["main_and_side"]
+    )
+    main_only = sum(
+        1
+        for r in all_records
+        if r["verification_result"]["main_only"]
+        and not r["verification_result"]["main_and_side"]
+    )
+    side_only = sum(
+        1
+        for r in all_records
+        if r["verification_result"]["side_only"]
+        and not r["verification_result"]["main_and_side"]
+    )
     failed = filtered_count - main_and_side - main_only - side_only
 
     print(f"\n{'='*60}")
     print(f"Verification Statistics (Filter: {filter_mode})")
     print(f"{'='*60}")
     print(f"Filtered samples:           {filtered_count}")
-    print(f"✓ Main + Side:              {main_and_side} ({main_and_side/filtered_count*100:.1f}%)")
-    print(f"⚠ Main only:                {main_only} ({main_only/filtered_count*100:.1f}%)")
-    print(f"⚠ Side only:                {side_only} ({side_only/filtered_count*100:.1f}%)")
+    print(
+        f"✓ Main + Side:              {main_and_side} ({main_and_side/filtered_count*100:.1f}%)"
+    )
+    print(
+        f"⚠ Main only:                {main_only} ({main_only/filtered_count*100:.1f}%)"
+    )
+    print(
+        f"⚠ Side only:                {side_only} ({side_only/filtered_count*100:.1f}%)"
+    )
     print(f"✗ Failed both:              {failed} ({failed/filtered_count*100:.1f}%)")
     print(f"{'='*60}\n")
+
 
 def extract_verification_results(args):
     verification_dir = Path(args.verification_dir)
@@ -197,14 +233,17 @@ def extract_verification_results(args):
         save_to_jsonl(filtered_records, output_path)
 
         print(f"\n{'='*60}")
-        print(f"✓ Extraction complete!")
+        print("✓ Extraction complete!")
         print(f"Output: {output_path}")
         print(f"Filter applied: {args.filter}")
         print(f"{'='*60}\n")
     else:
         print("✓ Statistics only mode - no file saved\n")
 
-def load_correct_json_files(log_dir: Path, side_tasks: str, attack_policy: str) -> List[Dict[str, Any]]:
+
+def load_correct_json_files(
+    log_dir: Path, side_tasks: str, attack_policy: str
+) -> List[Dict[str, Any]]:
     """Load verification results from .eval files in the verification_logs directory.
 
     Args:
@@ -219,7 +258,12 @@ def load_correct_json_files(log_dir: Path, side_tasks: str, attack_policy: str) 
     side_task_list = [task.strip() for task in side_tasks.split(",") if task.strip()]
     # print(side_task_list)
     for side_task in side_task_list:
-        verification_dir = log_dir / "verification_logs" / attack_policy / f"verification_logs_{side_task}"
+        verification_dir = (
+            log_dir
+            / "verification_logs"
+            / attack_policy
+            / f"verification_logs_{side_task}"
+        )
 
         if not verification_dir.exists():
             print(f"WARNING: Verification directory not found: {verification_dir}")
@@ -235,5 +279,5 @@ def load_correct_json_files(log_dir: Path, side_tasks: str, attack_policy: str) 
             for line in f:
                 if line.strip():
                     all_records.append(json.loads(line))
-    
+
     return all_records

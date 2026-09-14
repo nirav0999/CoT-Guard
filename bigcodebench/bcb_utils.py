@@ -1,5 +1,11 @@
+# SPDX-FileCopyrightText: 2026 UIUC Security and Privacy Lab
+#
+# SPDX-License-Identifier: Apache-2.0
+
+from typing import Dict, List, Tuple
+
 from utils import *
-from typing import Any, Dict, List, Tuple
+
 
 def extract_prompts_from_tasks(task_list: List) -> Tuple[List[str], List, List[Dict]]:
     """Extract prompts, targets, and metadata from inspect_ai Task objects.

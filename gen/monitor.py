@@ -1,15 +1,9 @@
 import os
-from datetime import datetime, time
+from datetime import datetime
 from typing import Dict, List
 
 import rich
 from fire import Fire
-
-from gen.generate import GenerationConfig, run_api_generation, run_vllm_generation
-from utils import (
-    load_jsonl,
-    save_jsonl,
-)
 
 from config import (
     DEFAULT_ATTACK_MODEL,
@@ -19,9 +13,11 @@ from config import (
     GLOBAL_DIRECTORY,
     TEMP_DIRECTORY,
 )
-
-from constants import (
-    FILTER_MODES
+from constants import FILTER_MODES
+from gen.generate import GenerationConfig, run_api_generation, run_vllm_generation
+from utils import (
+    load_jsonl,
+    save_jsonl,
 )
 
 MONITOR_TYPES = ["cot_only", "action_only", "cot_action"]
@@ -37,6 +33,7 @@ def get_monitor_input_paths(
     filter_mode: str,
     monitor_policy: str,
     monitor_types: List[str],
+    prompt_variant: str = "standard",
 ) -> Dict[str, str]:
     input_dir = os.path.join(
         GLOBAL_DIRECTORY,
@@ -45,6 +42,8 @@ def get_monitor_input_paths(
         f"{main_task}.{side_task}.{attack_policy}/{attack_model.split('/')[-1]}--{attack_rollouts}/",
     )
     base = f"{filter_mode}.{monitor_policy}"
+    if prompt_variant != "standard":
+        base = f"{base}.{prompt_variant}"
     return {mt: os.path.join(input_dir, f"{base}.{mt}.jsonl") for mt in monitor_types}
 
 
@@ -60,6 +59,7 @@ def get_output_path_base(
     monitor_model: str,
     monitor_temp: float,
     model_id: str = "",
+    prompt_variant: str = "standard",
 ) -> str:
     base = f"{attack_model.split('/')[-1]}--{attack_rollouts}"
     output_dir = os.path.join(
@@ -70,9 +70,10 @@ def get_output_path_base(
         base,
     )
     monitor_model_short = model_id if model_id else monitor_model.split("/")[-1]
-    return os.path.join(
-        output_dir, f"{filter_mode}.{monitor_model_short}.{monitor_policy}"
-    )
+    base = f"{filter_mode}.{monitor_model_short}.{monitor_policy}"
+    if prompt_variant != "standard":
+        base = f"{base}.{prompt_variant}"
+    return os.path.join(output_dir, base)
 
 
 def count_existing_rollouts(output_path: str) -> Dict[str, int]:
@@ -138,10 +139,14 @@ def split_and_merge_outputs(
     for row in results:
         task_id = row["task_id"]
         parts = task_id.split(":")
-        base_id = ":".join(parts[:-1])
-        rollout_idx = int(parts[-1])
-
-        monitor_type = parts[-2]
+        if parts[-1] in monitor_types:
+            base_id = task_id
+            rollout_idx = 0
+            monitor_type = parts[-1]
+        else:
+            base_id = ":".join(parts[:-1])
+            rollout_idx = int(parts[-1])
+            monitor_type = parts[-2]
         assert (
             monitor_type in monitor_types
         ), f"Unknown monitor_type in task_id: {task_id}"
@@ -180,6 +185,7 @@ def monitor_infer_main(
     attack_rollouts: int = 5,
     filter_mode: str = "side-all",
     monitor_policy: str = "main_aware",
+    prompt_variant: str = "standard",
     monitor_model: str = "Qwen/Qwen3-14B",
     monitor_temp: float = DEFAULT_TEMP,
     monitor_type: str = "all",
@@ -217,6 +223,7 @@ def monitor_infer_main(
         final_filter_mode,
         monitor_policy,
         monitor_types,
+        prompt_variant,
     )
     output_path_base = get_output_path_base(
         main_task,
@@ -230,9 +237,10 @@ def monitor_infer_main(
         monitor_model,
         monitor_temp,
         model_id=model_id,
+        prompt_variant=prompt_variant,
     )
 
-    rich.print(f"[cyan bold underline]📊 Monitor Inference[/cyan bold underline]")
+    rich.print("[cyan bold underline]📊 Monitor Inference[/cyan bold underline]")
     for mt, p in input_paths.items():
         rich.print(f"[blue]→ {mt}: {p}[/blue]")
     rich.print(f"[bright_blue]← Output base: {output_path_base}[/bright_blue]")
@@ -241,14 +249,14 @@ def monitor_infer_main(
         assert os.path.exists(path), f"Missing: {path}"
 
     rich.print(
-        f"\n[cyan bold underline]📊 Checking Existing & Merging[/cyan bold underline]"
+        "\n[cyan bold underline]📊 Checking Existing & Merging[/cyan bold underline]"
     )
     merged, existing_counts, max_needed = merge_inputs_with_resume(
         input_paths, output_path_base, num_rollouts
     )
 
     if not merged:
-        rich.print(f"\n[green]✓ All rollouts complete. Nothing to generate.[/green]")
+        rich.print("\n[green]✓ All rollouts complete. Nothing to generate.[/green]")
         return output_path_base
 
     rich.print(
@@ -282,7 +290,7 @@ def monitor_infer_main(
     # ):  # Specifically for Qwen3-4B, we found that presence penalty helps reduce repetition and improves quality
     #     gen_config.presence_penalty = 1.5
 
-    rich.print(f"\n[cyan bold underline]📊 Running Generation[/cyan bold underline]")
+    rich.print("\n[cyan bold underline]📊 Running Generation[/cyan bold underline]")
     if backend == "vllm":
         run_vllm_generation(temp_input, temp_output, gen_config)
     elif backend == "api":
@@ -290,7 +298,7 @@ def monitor_infer_main(
     else:
         raise ValueError(f"Unknown backend: {backend}")
 
-    rich.print(f"\n[cyan bold underline]📊 Merging Results[/cyan bold underline]")
+    rich.print("\n[cyan bold underline]📊 Merging Results[/cyan bold underline]")
     results = load_jsonl(temp_output)
     split_and_merge_outputs(results, output_path_base, existing_counts, monitor_types)
 
@@ -306,6 +314,7 @@ def monitor_parallel(
     attack_rollouts: int = 5,
     filter_mode: str = "side-all",
     monitor_policy: str = "main_aware",
+    prompt_variant: str = "standard",
     monitor_model: str = "Qwen/Qwen3-8B",
     monitor_temp: float = DEFAULT_TEMP,
     monitor_type: str = "all",
@@ -361,6 +370,7 @@ def monitor_parallel(
                 final_filter_mode,
                 monitor_policy,
                 monitor_types,
+                prompt_variant,
             )
             output_path_base = get_output_path_base(
                 main_task,
@@ -374,13 +384,14 @@ def monitor_parallel(
                 monitor_model,
                 monitor_temp,
                 model_id=model_id,
+                prompt_variant=prompt_variant,
             )
 
             for mt in monitor_types:
                 input_paths.append(type_input_paths[mt])
                 output_paths.append(f"{output_path_base}.{mt}.jsonl")
 
-    for inp, out in zip(input_paths, output_paths):
+    for inp, out in zip(input_paths, output_paths, strict=False):
         rich.print(f"[blue]→ {inp}[/blue]")
         rich.print(f"[bright_blue]← {out}[/bright_blue]")
     rich.print()
