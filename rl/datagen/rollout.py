@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 
-# # SPDX-FileCopyrightText: (c) {year} UIUC Security and Privacy Lab
-# #
-# # SPDX-License-Identifier: Apache-2.0
+# SPDX-FileCopyrightText: 2026 UIUC Security and Privacy Lab
+#
+# SPDX-License-Identifier: Apache-2.0
 
 import os
 
@@ -55,7 +55,7 @@ def generate_rollouts(
             f"[yellow]Deduplication: {len(data)} → {len(deduped_data)} = removed {len(data) - len(deduped_data)} / {len(data)}[/yellow]"
         )
     else:
-        rich.print(f"[green]✓ No duplicate task_ids found[/green]")
+        rich.print("[green]✓ No duplicate task_ids found[/green]")
 
     data = deduped_data
 
@@ -80,7 +80,7 @@ def generate_rollouts(
             f"[orange3]⚠ {shared_message_count} records share messages with an earlier record (showed first 5)[/orange3]"
         )
     else:
-        rich.print(f"[green]✓ No duplicate messages found[/green]")
+        rich.print("[green]✓ No duplicate messages found[/green]")
 
     gen_input_path = input_path.replace(".jsonl", ".gen_input.jsonl")
     ground_truth_path = input_path.replace(".jsonl", ".ground_truth.jsonl")

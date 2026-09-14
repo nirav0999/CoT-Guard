@@ -1,6 +1,6 @@
-# # SPDX-FileCopyrightText: (c) {year} UIUC Security and Privacy Lab
-# #
-# # SPDX-License-Identifier: Apache-2.0
+# SPDX-FileCopyrightText: 2026 UIUC Security and Privacy Lab
+#
+# SPDX-License-Identifier: Apache-2.0
 
 import os
 import sys
@@ -88,7 +88,7 @@ def main(run_dir: str, split: str = "train") -> None:
         "both",
     }, f"split must be train/val/both, got {split}"
 
-    rich.print(f"[magenta bold]═══ Print Rewards ═══[/magenta bold]")
+    rich.print("[magenta bold]═══ Print Rewards ═══[/magenta bold]")
     rich.print(f"[blue]→ run_dir = {run_dir}[/blue]")
     rich.print(f"[blue]→ split = {split}[/blue]")
 

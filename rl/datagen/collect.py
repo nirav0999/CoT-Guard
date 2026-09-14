@@ -1,6 +1,6 @@
-# # SPDX-FileCopyrightText: (c) {year} UIUC Security and Privacy Lab
-# #
-# # SPDX-License-Identifier: Apache-2.0
+# SPDX-FileCopyrightText: 2026 UIUC Security and Privacy Lab
+#
+# SPDX-License-Identifier: Apache-2.0
 
 import json
 import os
@@ -214,7 +214,7 @@ def collect_main(
                                 )
 
     # base_name = f'{monitor_objective}.{"_".join(main_tasks)}.{"_".join(side_tasks)}.{"_".join(evaluated_models)}.{"_".join(monitor_models)}.{"_".join(monitor_policies)}.{"_".join(attack_policies)}'
-    
+
     base_name = f'{"_".join(monitor_objectives)}.{"_".join(main_tasks)}.{"_".join(side_tasks)}.{"_".join(evaluated_models)}.{"_".join(monitor_models)}.{"_".join(monitor_policies)}.{"_".join(attack_policies)}'
     list_token_lens = token_len_list(records)
 
@@ -254,7 +254,7 @@ def collect_main(
     malicious_pool = [r for r, _ in malicious_pool]
 
     mal_dist = Counter(r["extra_info"]["side_task"] for r in malicious_pool)
-    rich.print(f"[cyan bold underline]📊 Malicious pool distribution by side_task[/]")
+    rich.print("[cyan bold underline]📊 Malicious pool distribution by side_task[/]")
     for st, count in sorted(mal_dist.items()):
         rich.print(
             f"[yellow]  {st}: {count} / {len(malicious_pool)} = {count / len(malicious_pool) * 100:.1f}%[/]"

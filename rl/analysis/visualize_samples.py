@@ -1,6 +1,6 @@
-# # SPDX-FileCopyrightText: (c) {year} UIUC Security and Privacy Lab
-# #
-# # SPDX-License-Identifier: Apache-2.0
+# SPDX-FileCopyrightText: 2026 UIUC Security and Privacy Lab
+#
+# SPDX-License-Identifier: Apache-2.0
 
 import hashlib
 import json
@@ -365,7 +365,7 @@ def main(
 ) -> None:
     run_dir = os.path.abspath(os.path.expanduser(run_dir))
     assert os.path.isdir(run_dir), run_dir
-    rich.print(f"[magenta bold]═══ Visualize Samples ═══[/magenta bold]")
+    rich.print("[magenta bold]═══ Visualize Samples ═══[/magenta bold]")
     rich.print(f"[blue]→ run_dir = {run_dir}[/blue]")
     rich.print(f"[blue]→ dataset_files = {dataset_files}[/blue]")
     rich.print(f"[blue]→ port = {port}[/blue]")

@@ -1,18 +1,17 @@
 #!/usr/bin/env python3
 
-# # SPDX-FileCopyrightText: (c) {year} UIUC Security and Privacy Lab
-# #
-# # SPDX-License-Identifier: Apache-2.0
+# SPDX-FileCopyrightText: 2026 UIUC Security and Privacy Lab
+#
+# SPDX-License-Identifier: Apache-2.0
 
 import json
 import random
 from pathlib import Path
-from typing import Dict, List
 
 import rich
 from transformers import AutoTokenizer
 
-from utils import GLOBAL_DIRECTORY, extract_choice, load_jsonl
+from utils import GLOBAL_DIRECTORY, extract_choice
 
 SAVE_PATH = "/srv/local/hanw14/icml2026/coding/rl_data/"
 MODEL_NAME_OR_PATH = "Qwen/Qwen3-32B"

@@ -1,12 +1,11 @@
 #!/usr/bin/env python3
 
-# # SPDX-FileCopyrightText: (c) {year} UIUC Security and Privacy Lab
-# #
-# # SPDX-License-Identifier: Apache-2.0
+# SPDX-FileCopyrightText: 2026 UIUC Security and Privacy Lab
+#
+# SPDX-License-Identifier: Apache-2.0
 
 import json
 from pathlib import Path
-from typing import List
 
 import rich
 from transformers import AutoTokenizer

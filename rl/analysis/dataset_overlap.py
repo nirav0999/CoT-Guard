@@ -1,6 +1,6 @@
-# # SPDX-FileCopyrightText: (c) {year} UIUC Security and Privacy Lab
-# #
-# # SPDX-License-Identifier: Apache-2.0
+# SPDX-FileCopyrightText: 2026 UIUC Security and Privacy Lab
+#
+# SPDX-License-Identifier: Apache-2.0
 
 import json
 import os
@@ -19,14 +19,12 @@ if PROJECT_ROOT not in sys.path:
 SampleKey = tuple[str, str, str]
 
 
-def parse_train_task_id(
-    task_id: str, side_task: str, attack_policy: str
-) -> SampleKey:
+def parse_train_task_id(task_id: str, side_task: str, attack_policy: str) -> SampleKey:
     parts = task_id.split(":")
     assert len(parts) == 5, f"train task_id must have 5 colon parts: {task_id}"
-    assert parts[0] == side_task, (
-        f"train task_id side prefix {parts[0]!r} != side_task {side_task!r}: {task_id}"
-    )
+    assert (
+        parts[0] == side_task
+    ), f"train task_id side prefix {parts[0]!r} != side_task {side_task!r}: {task_id}"
     main_attack = parts[1]
     suffix = "_" + attack_policy
     assert main_attack.endswith(suffix), (
@@ -56,9 +54,9 @@ def load_train_keys_by_side(
             assert "extra_info" in rec, f"{train_path}:{line_no} missing extra_info"
             assert "task_id" in rec, f"{train_path}:{line_no} missing task_id"
             extra = rec["extra_info"]
-            assert "benign" in extra and "side_task" in extra, (
-                f"{train_path}:{line_no} extra_info missing benign/side_task"
-            )
+            assert (
+                "benign" in extra and "side_task" in extra
+            ), f"{train_path}:{line_no} extra_info missing benign/side_task"
             if extra["benign"]:
                 n_benign += 1
                 continue
@@ -92,9 +90,7 @@ def eval_dir_for_side(
 def load_eval_keys_for_side(eval_dir: str) -> set[SampleKey]:
     assert os.path.isdir(eval_dir), eval_dir
     keys: set[SampleKey] = set()
-    file_names = sorted(
-        fn for fn in os.listdir(eval_dir) if fn.endswith(".jsonl")
-    )
+    file_names = sorted(fn for fn in os.listdir(eval_dir) if fn.endswith(".jsonl"))
     assert file_names, f"no .jsonl files in {eval_dir}"
 
     n_rows = 0
@@ -145,9 +141,7 @@ def print_overlap_row(
     if n_train == 0:
         train_frac = "n/a (train=0)"
     else:
-        train_frac = (
-            f"{n_overlap} / {n_train} = {n_overlap / n_train * 100:.1f}%"
-        )
+        train_frac = f"{n_overlap} / {n_train} = {n_overlap / n_train * 100:.1f}%"
 
     rich.print(
         f"[yellow]  {side_task:<14} "
@@ -172,7 +166,7 @@ def main(
     assert os.path.isdir(results_root), results_root
     assert isinstance(side_tasks, list) and side_tasks, side_tasks
 
-    rich.print(f"[magenta bold]═══ Dataset Overlap ═══[/magenta bold]")
+    rich.print("[magenta bold]═══ Dataset Overlap ═══[/magenta bold]")
     rich.print(f"[blue]→ train_path = {train_path}[/blue]")
     rich.print(f"[blue]→ results_root = {results_root}[/blue]")
     rich.print(f"[blue]→ main_task = {main_task}[/blue]")
@@ -181,7 +175,7 @@ def main(
     rich.print(f"[blue]→ rollout_num = {rollout_num}[/blue]")
     rich.print(f"[blue]→ attack_policy = {attack_policy}[/blue]")
 
-    rich.print(f"[cyan bold underline]📊 loading train keys[/]")
+    rich.print("[cyan bold underline]📊 loading train keys[/]")
     train_keys_by_side = load_train_keys_by_side(train_path, attack_policy)
     for st in sorted(train_keys_by_side):
         rich.print(
@@ -189,7 +183,7 @@ def main(
             f"{len(train_keys_by_side[st])}[/]"
         )
 
-    rich.print(f"[cyan bold underline]📊 per side_task overlap[/]")
+    rich.print("[cyan bold underline]📊 per side_task overlap[/]")
     totals_overlap = 0
     totals_eval = 0
     totals_train = 0
@@ -212,7 +206,7 @@ def main(
         totals_eval += n_eval
         totals_train += n_train
 
-    rich.print(f"[magenta bold]═══ totals ═══[/magenta bold]")
+    rich.print("[magenta bold]═══ totals ═══[/magenta bold]")
     if totals_eval > 0:
         rich.print(
             f"[yellow]  overlap / eval_total = {totals_overlap} / "
@@ -224,7 +218,7 @@ def main(
             f"{totals_train} = {totals_overlap / totals_train * 100:.1f}%[/]"
         )
     if totals_overlap == 0:
-        rich.print(f"[green]✓ no overlap found[/green]")
+        rich.print("[green]✓ no overlap found[/green]")
     else:
         rich.print(f"[orange3]⚠ {totals_overlap} overlapping sample keys[/]")
 

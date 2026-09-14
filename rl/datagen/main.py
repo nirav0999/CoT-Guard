@@ -1,6 +1,6 @@
-# # SPDX-FileCopyrightText: (c) {year} UIUC Security and Privacy Lab
-# #
-# # SPDX-License-Identifier: Apache-2.0
+# SPDX-FileCopyrightText: 2026 UIUC Security and Privacy Lab
+#
+# SPDX-License-Identifier: Apache-2.0
 
 from rl.datagen.collect import collect_main
 
@@ -29,8 +29,10 @@ def main(
     id_main_tasks=["bigcodebench"],
     ood_main_tasks=["bigcodebench"],
     id_side_tasks=[
-        "defaultval", "complexity",  "varname"
-        # "longlines", "complexity", 
+        "defaultval",
+        "complexity",
+        "varname",
+        # "longlines", "complexity",
         # "permissions",
         # "iodelete",
         # "exit",
@@ -45,10 +47,10 @@ def main(
     rollout_num=5,
     monitor_policies=["main_aware"],
     monitor_objectives=[
-            # "action_only",
-            # "cot_only",
-            "cot_action"
-        ],
+        # "action_only",
+        # "cot_only",
+        "cot_action"
+    ],
     filter="side-all",
     top_k=32,
     check_against_sft: bool = False,

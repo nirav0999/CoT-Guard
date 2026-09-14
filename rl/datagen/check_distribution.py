@@ -1,6 +1,6 @@
-# # SPDX-FileCopyrightText: (c) {year} UIUC Security and Privacy Lab
-# #
-# # SPDX-License-Identifier: Apache-2.0
+# SPDX-FileCopyrightText: 2026 UIUC Security and Privacy Lab
+#
+# SPDX-License-Identifier: Apache-2.0
 
 import json
 from collections import Counter
@@ -94,7 +94,7 @@ def check_distribution(
         )
 
         rich.print(
-            f"\n[magenta bold]Side task files (malicious samples):[/magenta bold]"
+            "\n[magenta bold]Side task files (malicious samples):[/magenta bold]"
         )
         rich.print(f"[dim]  Total samples: {side_total}[/dim]")
         for choice in sorted(side_counter.keys()):
@@ -103,7 +103,7 @@ def check_distribution(
                 f"[yellow]  {choice}: {count} / {side_total} = {count / side_total * 100:.1f}%[/yellow]"
             )
 
-        rich.print(f"\n[magenta bold]Main task files (benign samples):[/magenta bold]")
+        rich.print("\n[magenta bold]Main task files (benign samples):[/magenta bold]")
         rich.print(f"[dim]  Total samples: {main_total}[/dim]")
         for choice in sorted(main_counter.keys()):
             count = main_counter[choice]
@@ -113,7 +113,7 @@ def check_distribution(
 
         total = side_total + main_total
         combined = side_counter + main_counter
-        rich.print(f"\n[magenta bold]Combined:[/magenta bold]")
+        rich.print("\n[magenta bold]Combined:[/magenta bold]")
         rich.print(f"[dim]  Total samples: {total}[/dim]")
         for choice in sorted(combined.keys()):
             count = combined[choice]
@@ -122,7 +122,7 @@ def check_distribution(
             )
 
         rich.print(
-            f"\n[magenta bold]After collect.py filtering (side accepts C only, main accepts A/B/D):[/magenta bold]"
+            "\n[magenta bold]After collect.py filtering (side accepts C only, main accepts A/B/D):[/magenta bold]"
         )
         filtered_mal = side_counter.get("C", 0)
         filtered_ben = sum(main_counter[c] for c in ["A", "B", "D"])

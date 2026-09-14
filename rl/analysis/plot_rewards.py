@@ -1,6 +1,6 @@
-# # SPDX-FileCopyrightText: (c) {year} UIUC Security and Privacy Lab
-# #
-# # SPDX-License-Identifier: Apache-2.0
+# SPDX-FileCopyrightText: 2026 UIUC Security and Privacy Lab
+#
+# SPDX-License-Identifier: Apache-2.0
 
 import json
 import os
@@ -237,7 +237,7 @@ PLOT_CONFIGS = [
 def main(run_dir: str, output_json: str = "", max_step: int = -1) -> None:
     run_dir = os.path.abspath(os.path.expanduser(run_dir))
     assert os.path.isdir(run_dir), run_dir
-    rich.print(f"[magenta bold]═══ Plot Rewards ═══[/magenta bold]")
+    rich.print("[magenta bold]═══ Plot Rewards ═══[/magenta bold]")
     rich.print(f"[blue]→ run_dir = {run_dir}[/blue]")
 
     aggregated = aggregate_run(run_dir)

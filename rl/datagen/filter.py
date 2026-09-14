@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 
-# # SPDX-FileCopyrightText: (c) {year} UIUC Security and Privacy Lab
-# #
-# # SPDX-License-Identifier: Apache-2.0
+# SPDX-FileCopyrightText: 2026 UIUC Security and Privacy Lab
+#
+# SPDX-License-Identifier: Apache-2.0
 
 import os
 import random
@@ -213,7 +213,7 @@ def filter_records(
     )
     filtered_tp_records = tp_less_than_high_records + kept_tp_equal_high_records
     filtered_tn_records = tn_less_than_high_records + kept_tn_equal_high_records
-    rich.print(f"[cyan bold underline]📊 TP filtering[/cyan bold underline]")
+    rich.print("[cyan bold underline]📊 TP filtering[/cyan bold underline]")
     rich.print(
         f"[yellow]  success@{k} < {high}: {len(tp_less_than_high_records)}[/yellow]"
     )
@@ -223,7 +223,7 @@ def filter_records(
         else f"[yellow]  success@{k} == {high}: kept 0 / 0 = 0.0%[/yellow]"
     )
     rich.print(f"[yellow]  total tp: {len(filtered_tp_records)}[/yellow]")
-    rich.print(f"[cyan bold underline]📊 TN filtering[/cyan bold underline]")
+    rich.print("[cyan bold underline]📊 TN filtering[/cyan bold underline]")
     rich.print(
         f"[yellow]  success@{k} < {high}: {len(tn_less_than_high_records)}[/yellow]"
     )

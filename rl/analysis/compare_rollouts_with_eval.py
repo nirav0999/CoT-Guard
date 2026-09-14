@@ -1,6 +1,6 @@
-# # SPDX-FileCopyrightText: (c) {year} UIUC Security and Privacy Lab
-# #
-# # SPDX-License-Identifier: Apache-2.0
+# SPDX-FileCopyrightText: 2026 UIUC Security and Privacy Lab
+#
+# SPDX-License-Identifier: Apache-2.0
 
 import hashlib
 import os
@@ -23,7 +23,9 @@ def content_hash(text: str) -> str:
     return hashlib.md5(text.encode()).hexdigest()[:16]
 
 
-def discover_rollout_files(run_dir: str, include_val: bool) -> list[tuple[int, str, str]]:
+def discover_rollout_files(
+    run_dir: str, include_val: bool
+) -> list[tuple[int, str, str]]:
     assert os.path.isdir(run_dir), run_dir
     base = os.path.basename(os.path.normpath(run_dir))
     if base in {"rollout_logs", "val_logs"}:
@@ -52,8 +54,12 @@ def discover_rollout_files(run_dir: str, include_val: bool) -> list[tuple[int, s
 def rollout_user_prompt(row: dict) -> str:
     assert "input" in row, f"rollout row missing 'input': {list(row.keys())}"
     s = row["input"]
-    assert s.startswith("user\n"), f"expected input to start with 'user\\n', got: {s[:20]!r}"
-    assert s.endswith("\nassistant\n"), f"expected input to end with '\\nassistant\\n', got: {s[-20:]!r}"
+    assert s.startswith(
+        "user\n"
+    ), f"expected input to start with 'user\\n', got: {s[:20]!r}"
+    assert s.endswith(
+        "\nassistant\n"
+    ), f"expected input to end with '\\nassistant\\n', got: {s[-20:]!r}"
     return s[len("user\n") : -len("\nassistant\n")]
 
 
@@ -64,7 +70,9 @@ def build_dataset_lookup(dataset_path: str) -> dict[str, dict]:
     lookup: dict[str, dict] = {}
     n_collisions = 0
     for row in rows:
-        assert "messages" in row and "task_id" in row and "extra_info" in row, list(row.keys())
+        assert "messages" in row and "task_id" in row and "extra_info" in row, list(
+            row.keys()
+        )
         user_prompt = row["messages"][0]["content"]
         h = content_hash(user_prompt)
         task_id = row["task_id"]
@@ -109,9 +117,9 @@ def merge_rollouts(
         for row in rows:
             user_prompt = rollout_user_prompt(row)
             h = content_hash(user_prompt)
-            assert h in dataset_lookup, (
-                f"no dataset match for rollout prompt (hash={h}) at {path}"
-            )
+            assert (
+                h in dataset_lookup
+            ), f"no dataset match for rollout prompt (hash={h}) at {path}"
             meta = dataset_lookup[h]
             assert "output" in row, f"rollout row missing 'output': {list(row.keys())}"
             record = {
@@ -136,7 +144,9 @@ def merge_rollouts(
             if "monitor_guess" in row:
                 record["rollout_monitor_guess"] = row["monitor_guess"]
             merged.append(record)
-        rich.print(f"[dim]  {split} step {step_no}: {len(rows)} rollouts from {path}[/dim]")
+        rich.print(
+            f"[dim]  {split} step {step_no}: {len(rows)} rollouts from {path}[/dim]"
+        )
     rich.print(
         f"[green]✓ merged: {len(merged)} / {total_rows} rollouts "
         f"across {len(rollout_files)} files[/green]"
@@ -174,9 +184,9 @@ def build_eval_cache(eval_dir: str) -> dict[tuple[str, str], dict[str, dict]]:
             user_prompt = row["messages"][0]["content"]
             h = content_hash(user_prompt)
             key = (h, str(md["main_task_id"]))
-            assert row["messages"][-1]["role"] == "assistant", (
-                f"expected last message role=assistant in {path}, got {row['messages'][-1]['role']}"
-            )
+            assert (
+                row["messages"][-1]["role"] == "assistant"
+            ), f"expected last message role=assistant in {path}, got {row['messages'][-1]['role']}"
             cache.setdefault(key, {})[fn] = {
                 "eval_path": path,
                 "eval_task_id": row["task_id"],
@@ -256,7 +266,7 @@ def main(
     assert os.path.isdir(eval_root), eval_root
     assert os.path.isdir(run_dir), run_dir
 
-    rich.print(f"[magenta bold]═══ Compare Rollouts With Eval ═══[/magenta bold]")
+    rich.print("[magenta bold]═══ Compare Rollouts With Eval ═══[/magenta bold]")
     rich.print(f"[blue]→ run_dir = {run_dir}[/blue]")
     rich.print(f"[blue]→ dataset_path = {dataset_path}[/blue]")
     rich.print(f"[blue]→ eval_root = {eval_root}[/blue]")
@@ -267,16 +277,16 @@ def main(
     rich.print(f"[blue]→ rollout_num = {rollout_num}[/blue]")
     rich.print(f"[blue]→ include_val = {include_val}[/blue]")
 
-    rich.print(f"[cyan bold underline]📊 discovering rollout files[/]")
+    rich.print("[cyan bold underline]📊 discovering rollout files[/]")
     rollout_files = discover_rollout_files(run_dir, include_val=include_val)
 
-    rich.print(f"[cyan bold underline]📊 building dataset lookup[/]")
+    rich.print("[cyan bold underline]📊 building dataset lookup[/]")
     dataset_lookup = build_dataset_lookup(dataset_path)
 
-    rich.print(f"[cyan bold underline]📊 merging rollouts[/]")
+    rich.print("[cyan bold underline]📊 merging rollouts[/]")
     merged_rollouts = merge_rollouts(rollout_files, dataset_lookup)
 
-    rich.print(f"[cyan bold underline]📊 attaching eval matches[/]")
+    rich.print("[cyan bold underline]📊 attaching eval matches[/]")
     merged_rollouts = attach_eval_matches(
         merged_rollouts,
         eval_root=eval_root,

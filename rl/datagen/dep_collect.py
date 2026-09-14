@@ -1,6 +1,6 @@
-# # SPDX-FileCopyrightText: (c) {year} UIUC Security and Privacy Lab
-# #
-# # SPDX-License-Identifier: Apache-2.0
+# SPDX-FileCopyrightText: 2026 UIUC Security and Privacy Lab
+#
+# SPDX-License-Identifier: Apache-2.0
 
 import json
 import os
@@ -359,19 +359,31 @@ def collect_main(
     malicious_pool = [r for r, _ in malicious_pool]
 
     if add_hard_malicious_samples:
-        regular = [r for r in malicious_pool if r["data_source"] != f"{set_type}_hard_malicious"]
-        hard = [r for r in malicious_pool if r["data_source"] == f"{set_type}_hard_malicious"]
+        regular = [
+            r
+            for r in malicious_pool
+            if r["data_source"] != f"{set_type}_hard_malicious"
+        ]
+        hard = [
+            r
+            for r in malicious_pool
+            if r["data_source"] == f"{set_type}_hard_malicious"
+        ]
         n_replace = min(len(hard), int(len(regular) * hard_malicious_replace_pct))
         random.shuffle(regular)
         regular = regular[n_replace:]
         malicious_pool = regular + hard[:n_replace]
-        rich.print(f"[yellow]Hard malicious replacement: removed {n_replace} regular, added {n_replace} hard[/]")
-        rich.print(f"[yellow]Hard: {n_replace} / {len(malicious_pool)} = {n_replace / len(malicious_pool) * 100:.1f}% | Regular: {len(regular)} / {len(malicious_pool)} = {len(regular) / len(malicious_pool) * 100:.1f}%[/]")
+        rich.print(
+            f"[yellow]Hard malicious replacement: removed {n_replace} regular, added {n_replace} hard[/]"
+        )
+        rich.print(
+            f"[yellow]Hard: {n_replace} / {len(malicious_pool)} = {n_replace / len(malicious_pool) * 100:.1f}% | Regular: {len(regular)} / {len(malicious_pool)} = {len(regular) / len(malicious_pool) * 100:.1f}%[/]"
+        )
 
     from collections import Counter
 
     mal_dist = Counter(r["extra_info"]["side_task"] for r in malicious_pool)
-    rich.print(f"[cyan bold underline]📊 Malicious pool distribution by side_task[/]")
+    rich.print("[cyan bold underline]📊 Malicious pool distribution by side_task[/]")
     for st, count in sorted(mal_dist.items()):
         rich.print(
             f"[yellow]  {st}: {count} / {len(malicious_pool)} = {count / len(malicious_pool) * 100:.1f}%[/]"

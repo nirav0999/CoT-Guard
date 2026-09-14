@@ -1,6 +1,6 @@
-# # SPDX-FileCopyrightText: (c) {year} UIUC Security and Privacy Lab
-# #
-# # SPDX-License-Identifier: Apache-2.0
+# SPDX-FileCopyrightText: 2026 UIUC Security and Privacy Lab
+#
+# SPDX-License-Identifier: Apache-2.0
 
 import json
 import os
@@ -48,7 +48,7 @@ def print_distribution(
     per_side: dict[str, dict[str, int]], total: int, input_path: str
 ) -> None:
     rich.print(f"[magenta bold]{'═' * 72}[/magenta bold]")
-    rich.print(f"[cyan bold underline]📊 Side task distribution[/cyan bold underline]")
+    rich.print("[cyan bold underline]📊 Side task distribution[/cyan bold underline]")
     rich.print(f"[dim]input_path = {input_path}[/dim]")
     rich.print(f"[dim]total rows = {total}[/dim]")
     rich.print(f"[magenta bold]{'═' * 72}[/magenta bold]")

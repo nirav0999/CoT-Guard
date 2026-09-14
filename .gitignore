@@ -87,3 +87,8 @@ figs/
 .ruff_cache/
 .venv/
 .pytest_cache/
+
+
+run_*
+out/
+templates/
