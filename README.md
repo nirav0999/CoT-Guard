@@ -17,7 +17,7 @@ export GOOGLE_API_KEY="your-gemini-api-key"
 export PYTHONPATH=$PYTHONPATH:$(pwd)
 ```
 
-## Pipeline
+## Inference Pipeline
 
 1. Attack: create tasks and generate attack responses.
 2. Verify: test responses for main-task correctness and side-task success.
@@ -50,13 +50,13 @@ Output: `$COT_GLOBAL_DIRECTORY/results/attack/bigcodebench.varname.baseline/Qwen
 
 ## Monitor
 
-a) Create monitor prompts from the verified attacks:
+a) Create monitor prompts from the attacks that were successful:
 
 ```bash
 python3 task_creation/for_monitor.py --main_task=bigcodebench --side_tasks=varname --attack_policies=baseline --model=Qwen/Qwen3-14B --attack_rollouts=5 --filter_mode=side-all --monitor_policy=main_aware --monitor_type=cot_action
 ```
 
-b) Run the monitor with `Qwen/Qwen3-8B` on GPU 0:
+b) Run the monitor with `Qwen/Qwen3-8B`:
 
 ```bash
 python3 gen/monitor.py single --main_task=bigcodebench --side_task=varname --attack_policy=baseline --attack_model=Qwen/Qwen3-14B --attack_rollouts=5 --filter_mode=side-all --monitor_policy=main_aware --monitor_model=Qwen/Qwen3-8B --monitor_type=cot_action --devices=0 --tp=1 --num_rollouts=1
@@ -77,11 +77,7 @@ python3 eval/display_table.py --main_task=bigcodebench --evaluated_model=Qwen/Qw
 ```
 
 
-
-
-
 ### Params
-
 
 Attack policy values include `--attack_policy=baseline`, `no_side_task`, `stealth`, and `monitor_notice`.
 
@@ -100,7 +96,18 @@ python3 gen/attack.py parallel --main_task=bigcodebench --side_tasks=varname,exi
 tp per N devices --> tensor parallel for vllm
 
 
+## RL Training Setup
+
+TBD
+
+## RL Dataset
+
+Our prompt dataset with verified ground truth is available at [RL-hard](https://huggingface.co/datasets/CoT-Guard/rl-hard).
 
 ## Stored Eval and Results
 
-TBD
+All our results and datasets available for download from [here] (https://drive.google.com/drive/folders/1eOg5--gmDHXLwIt17RyGC3FHxN-17y9q?usp=drive_link).
+
+Place them in the `$COT_GLOBAL_DIRECTORY/datasets/` directory, and run the `python3 eval/display_table.py` to get all of the results.
+
+Our RL results are placed in the
