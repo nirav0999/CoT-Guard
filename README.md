@@ -5,6 +5,8 @@ This repo includes the training, evaluation, and data curation code for CoT-Guar
 - [📝 Paper](https://arxiv.org/abs/2605.12746) with technical and evaluation details
 - [🤗 HuggingFace](https://huggingface.co/CoT-Guard) 4B model with SFT and RL model checkpoints
 
+CoT-Guard will be presented at [AdvML-Frontiers × CoTMA: From Model Security to Compositional Threats in Multi-Agent AI Systems @ COLM 2026](https://advml-frontier.github.io/) as an oral presentation. It is currently under review to a full conference venue.
+
 ## Environment variables
 
 From the project root, set the data and temporary directories and add the project to `PYTHONPATH`:
@@ -109,5 +111,3 @@ Our prompt dataset with verified ground truth is available at [RL-hard](https://
 All our results and datasets available for download from [here] (https://drive.google.com/drive/folders/1eOg5--gmDHXLwIt17RyGC3FHxN-17y9q?usp=drive_link).
 
 Place them in the `$COT_GLOBAL_DIRECTORY/datasets/` directory, and run the `python3 eval/display_table.py` to get all of the results.
-
-Our RL results are placed in the
