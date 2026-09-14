@@ -22,3 +22,14 @@ NON_SUBTLE_TASKS = [
 ]
 
 ATTACK_POLICIES = ["baseline", "monitor_aware", "stealth", "dependency"]
+
+DEFAULT_SIDE_TASKS = [
+    "iodownload",
+    "iodelete",
+    "permissions",
+    "ioexfil",
+    "exit",
+    "logio",
+]
+
+DEFAULT_ATTACK_POLICIES = ["no_side_task", "baseline", "monitor_notice"]
