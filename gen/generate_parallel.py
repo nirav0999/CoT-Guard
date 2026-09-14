@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2026 UIUC Security and Privacy Lab
+#
+# SPDX-License-Identifier: Apache-2.0
+
 import copy
 import os
 import subprocess
@@ -8,16 +12,15 @@ import fire
 import rich
 from filelock import FileLock
 
-from utils import (
-    load_jsonl,
-    save_jsonl,
-)
-
 from config import (
     DEFAULT_MAX_TOKENS,
     DEFAULT_ROLLOUTS,
     DEFAULT_TEMP,
     TEMP_DIRECTORY,
+)
+from utils import (
+    load_jsonl,
+    save_jsonl,
 )
 
 
