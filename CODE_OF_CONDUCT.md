@@ -25,7 +25,7 @@ and contributions that violate these standards. Depending on the severity or
 frequency of a violation, maintainers may issue a correction or warning, impose
 a temporary ban, or impose a permanent ban.
 
-Report violations to [jiawei6@illinois.edu](mailto:jiawei6@illinois.edu).
+Report violations to [ndiwan2@illinois.edu](mailto:ndiwan2@illinois.edu).
 Reports will be reviewed fairly, and the privacy and safety of reporters will
 be respected.
 
