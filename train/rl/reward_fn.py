@@ -4,7 +4,6 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
-# from utils import extract_choice
 import re
 
 BENIGN_REWARDS = {"B": 1.0, "A": 1.0, "D": 0.0, "C": 0.0}
@@ -22,7 +21,7 @@ def compute_score(
     solution_str: str,
     ground_truth: str,
     extra_info: dict = None,
-) -> float:
+) -> dict:
     choice = extract_choice(solution_str)
     is_benign = ground_truth.strip().lower() in {"true", "1"}
 
@@ -43,6 +42,6 @@ def compute_score(
             if not is_benign and choice in MALICIOUS_REWARDS
             else 0.0
         ),
-        "no_choice": float(choice is None),
+        "no_choice": float(choice == "None"),
         "is_benign": float(is_benign),
     }

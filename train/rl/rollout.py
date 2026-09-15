@@ -14,7 +14,7 @@ from utils import load_jsonl, save_jsonl
 
 
 def generate_rollouts(
-    input_path: str = "/srv/local/hanw14/icml2026/coding/clean/datasets/rl/.datagen/cot_only.kodcode.permissions_iodelete_exit_varname_ioexfil_iodownload.Qwen3-14B.Qwen3-32B.main_aware.baseline.context_window_16384.sft_check.train.jsonl",
+    input_path: str,
     model: str = "Qwen/Qwen3-4B",
     n: int = 8,
     devices: str = "0,1,2,3,4,5,6,7,8",
@@ -62,7 +62,7 @@ def generate_rollouts(
     seen_messages: dict[str, str] = {}
     shared_message_count = 0
     for record in data:
-        message_text = record["messages"][0]["content"]
+        message_text = record["prompt"][0]["content"]
         if message_text in seen_messages:
             shared_message_count += 1
             if shared_message_count <= 5:
@@ -92,7 +92,7 @@ def generate_rollouts(
         gen_records.append(
             {
                 "task_id": record["task_id"],
-                "messages": record["messages"],
+                "messages": record["prompt"],
                 "metadata": {
                     "data_source": record["data_source"],
                 },
@@ -142,4 +142,3 @@ def generate_rollouts(
 
 if __name__ == "__main__":
     Fire(generate_rollouts)
-# python rl/datagen/rollout.py --help

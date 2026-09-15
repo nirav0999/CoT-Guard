@@ -11,7 +11,7 @@ from collections import defaultdict
 import rich
 from fire import Fire
 
-from rl.reward_fn import compute_score
+from train.rl.reward_fn import compute_score
 from utils import load_jsonl, save_jsonl
 
 
@@ -40,7 +40,7 @@ def print_success_at_k_distribution(
 
 
 def filter_records(
-    input_path: str = "/srv/local/hanw14/icml2026/coding/clean/datasets/rl/.datagen/cot_only.kodcode.permissions_iodelete_exit_varname_ioexfil_iodownload.Qwen3-14B.Qwen3-32B.main_aware.baseline.context_window_16384.sft_check.train.jsonl",
+    input_path: str,
     k: int = 8,
     low: float = 0.0,
     high: float = 1.0,
@@ -89,7 +89,7 @@ def filter_records(
                 solution_str=assistant_response,
                 ground_truth=ground_truth,
             )
-            num_correct += int(score == 1.0)
+            num_correct += int(score["score"] == 1.0)
         success_at_k[base_id] = num_correct / len(rollout_group)
     rich.print(f"[yellow]Computed success@{k} for {len(success_at_k)} prompts[/yellow]")
     prompts_with_fewer = sum(
@@ -244,4 +244,3 @@ def filter_records(
 
 if __name__ == "__main__":
     Fire(filter_records)
-# python rl/datagen/filter.py --help

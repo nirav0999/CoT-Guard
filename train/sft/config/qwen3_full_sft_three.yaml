@@ -1,0 +1,46 @@
+### model
+model_name_or_path: Qwen/Qwen3-4B
+
+### method
+stage: sft
+do_train: true
+finetuning_type: full
+# Replace this example with the absolute path to your DeepSpeed config.
+deepspeed: /path/to/deepspeed-config.json
+
+### dataset
+dataset: cot_guard_action_only_kodcode_iodelete_ioexfil_iodownload,cot_guard_cot_only_kodcode_iodelete_ioexfil_iodownload,cot_guard_cot_action_kodcode_iodelete_ioexfil_iodownload
+# $COT_GLOBAL_DIRECTORY is literal here; replace it with your absolute data path.
+dataset_dir: "$COT_GLOBAL_DIRECTORY/datasets/sft"
+template: qwen3
+cutoff_len: 32768
+max_samples: 1000000
+overwrite_cache: true
+preprocessing_num_workers: 16
+dataloader_num_workers: 4
+
+### output
+output_dir: "$COT_GLOBAL_DIRECTORY/checkpoints/sft/qwen3-4b"
+logging_steps: 1
+save_steps: 3000
+plot_loss: true
+# overwrite_output_dir: true
+resume_from_checkpoint: null
+
+### train
+per_device_train_batch_size: 1
+gradient_accumulation_steps: 16
+learning_rate: 5.0e-6
+num_train_epochs: 7
+lr_scheduler_type: cosine
+warmup_ratio: 0.1
+weight_decay: 0.0
+bf16: true
+ddp_timeout: 180000000
+
+enable_liger_kernel: true
+use_unsloth_gc: true
+flash_attn: fa2
+
+report_to: wandb
+run_name: cot-guard-4b-sft

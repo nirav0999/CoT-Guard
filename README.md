@@ -98,13 +98,53 @@ python3 gen/attack.py parallel --main_task=bigcodebench --side_tasks=varname,exi
 tp per N devices --> tensor parallel for vllm
 
 
-## RL Training Setup
+## Training
 
-TBD
+The [paper](https://arxiv.org/pdf/2605.12746) uses I/O Delete, I/O Download,
+and I/O Exfiltrate Secret for SFT, then Default Value, Complexity, and Variable
+Name for RL. For each group, prepare verified `baseline` and
+`no_side_task` monitor outputs from Qwen3-14B attacks and a Qwen3-32B monitor,
+with all three scopes (`--monitor_type=all`).
 
-## RL Dataset
+### SFT
 
-Our prompt dataset with verified ground truth is available at [RL-hard](https://huggingface.co/datasets/CoT-Guard/rl-hard).
+Install [LlamaFactory](https://github.com/hiyouga/LLaMA-Factory), then collect
+the I/O task examples:
+
+```bash
+python3 train/sft/collect.py --main-tasks kodcode \
+  --side-tasks iodelete,ioexfil,iodownload --attack-rollouts 5
+```
+
+The collector registers three datasets in `dataset_info.json`. Edit
+`train/sft/config/qwen3_full_sft_three.yaml` before training: replace the
+example `deepspeed`, `dataset_dir`, and `output_dir` paths with absolute paths.
+`$COT_GLOBAL_DIRECTORY` in YAML is literal text and will not expand. Check the
+dataset and model names if you use different sources. Then run:
+
+```bash
+CUDA_VISIBLE_DEVICES=0,1,2,3,4,5,6,7 llamafactory-cli train train/sft/config/qwen3_full_sft_three.yaml
+```
+
+### RL / GRPO
+
+Collect training prompts from the three subtle tasks:
+
+```bash
+python3 train/rl/collect.py --main-tasks bigcodebench \
+  --side-tasks defaultval,complexity,varname --set-type train
+```
+
+Install [veRL](https://github.com/verl-project/verl) in a separate training
+environment and activate it. Before running, edit `DATA_ROOT`, `TRAIN_FILE`,
+`MODEL_PATH`, `CHECKPOINT_DIR`, `GPU_IDS`, and `EXPERIMENT` at the top
+of `train/rl/run_grpo.sh`. Use your collected JSONL paths and set `MODEL_PATH`
+to the same checkpoint as `output_dir` in the edited SFT YAML. The launcher
+disables validation. Then run:
+
+```bash
+bash train/rl/run_grpo.sh
+```
 
 ## Stored Eval and Results
 

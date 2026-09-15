@@ -74,7 +74,8 @@ trash/
 env-*/
 outputs
 train/wandb/
-train/sft_config/*.yaml
+train/sft/config/*.yaml
+!train/sft/config/qwen3_full_sft_three.yaml
 .trash/
 
 wandb/
@@ -90,5 +91,6 @@ figs/
 
 
 run_*
+!train/rl/run_*.sh
 out/
 templates/
