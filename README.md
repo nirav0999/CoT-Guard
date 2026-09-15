@@ -1,11 +1,13 @@
 # CoT-Guard
-
 This repo includes the training, evaluation, and data curation code for CoT-Guard. Please also check out:
 
 - [📝 Paper](https://arxiv.org/abs/2605.12746) with technical and evaluation details
 - [🤗 HuggingFace](https://huggingface.co/CoT-Guard) 4B model with SFT and RL model checkpoints
 
 CoT-Guard will be presented at [AdvML-Frontiers × CoTMA: From Model Security to Compositional Threats in Multi-Agent AI Systems @ COLM 2026](https://advml-frontier.github.io/) as an oral presentation. It is currently under review to a full conference venue.
+
+
+TO-DO: CLEAR ALL SECURITY WARNINGS
 
 ## Environment variables
 
