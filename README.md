@@ -108,6 +108,6 @@ Our prompt dataset with verified ground truth is available at [RL-hard](https://
 
 ## Stored Eval and Results
 
-All our results and datasets available for download from [here] (https://drive.google.com/drive/folders/1eOg5--gmDHXLwIt17RyGC3FHxN-17y9q?usp=drive_link).
+All our results and datasets available for download from [here](https://drive.google.com/drive/folders/1eOg5--gmDHXLwIt17RyGC3FHxN-17y9q?usp=drive_link).
 
 Place them in the `$COT_GLOBAL_DIRECTORY/datasets/` directory, and run the `python3 eval/display_table.py` to get all of the results.
