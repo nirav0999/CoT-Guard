@@ -4,9 +4,8 @@
 
 [About](#about) • [Documents](#documents) • [Citation](#citation) • [Acknowledgement](#acknowledgement)
 
-**Accepted at NeurIPS 2026.**
-
-**[AdvML-Frontiers × CoTMA: From Model Security to Compositional Threats in Multi-Agent AI Systems @ COLM 2026 (Oral)](https://advml-frontier.github.io/)**
+- Accepted at NeurIPS 2026.
+- AdvML-Frontiers × CoTMA: From Model Security to Compositional Threats in Multi-Agent AI Systems @ COLM 2026 (Oral_ 
 
 <a id="about"></a>
 
