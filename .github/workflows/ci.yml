@@ -1,0 +1,81 @@
+# SPDX-FileCopyrightText: 2026 UIUC Security and Privacy Lab
+#
+# SPDX-License-Identifier: Apache-2.0
+
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  cpu-tests:
+    name: CPU smoke tests
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v7
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@bec219d24cd3e171d82865faccec33120bb574f4 # v10.1.0
+        with:
+          version: "0.11.3"
+          enable-cache: true
+          cache-dependency-glob: uv.lock
+
+      - name: Install Python
+        run: uv python install 3.12
+
+      - name: Verify lockfile is current
+        run: uv lock --check
+
+      - name: Install lightweight CI dependencies
+        run: uv sync --frozen --only-group ci
+
+      - name: Check Python syntax
+        run: >-
+          .venv/bin/python -m compileall -q -x 'monitor_config\.py$'
+          config.py constants.py eval gen task_creation utils src
+
+      - name: Run CPU-safe tests
+        env:
+          COT_GLOBAL_DIRECTORY: ${{ runner.temp }}/cot-guard
+          COT_TEMP_DIRECTORY: ${{ runner.temp }}/cot-guard
+        run: >-
+          .venv/bin/python -m pytest -q
+          test/test_generation/test_format_prompts.py
+          test/test_monitor_prompts
+
+  benchmark-resolution:
+    name: Benchmark dependency resolution
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v7
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@bec219d24cd3e171d82865faccec33120bb574f4 # v10.1.0
+        with:
+          version: "0.11.3"
+
+      - name: Verify Python 3.10 benchmark dependencies resolve
+        run: >-
+          uv pip compile
+          --python-version 3.10
+          --python-platform linux
+          src/cot_red_handed/tasks/requirements.txt
+          --output-file "${RUNNER_TEMP}/benchmark-requirements.lock"

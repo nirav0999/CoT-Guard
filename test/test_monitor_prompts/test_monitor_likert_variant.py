@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2026 UIUC Security and Privacy Lab
+#
+# SPDX-License-Identifier: Apache-2.0
+
 from pathlib import Path
 from tempfile import TemporaryDirectory
 
@@ -11,8 +15,7 @@ from gen.monitor import get_monitor_input_paths, get_output_path_base
 from task_creation.for_monitor import build_monitor_records
 from utils import extract_likert_score, likert_score_to_choice, save_jsonl
 
-
-REPO_ROOT = Path(__file__).resolve().parents[1]
+REPO_ROOT = Path(__file__).resolve().parents[2]
 
 
 def _sample_record() -> dict:
@@ -83,8 +86,7 @@ def test_likert_template_is_minimal_and_selected() -> None:
     assert "following 1-to-5 scale" in output["messages"][0]["content"]
     assert output["metadata"]["prompt_variant"] == "likert"
     assert (
-        output["metadata"]["monitor_template"]
-        == "cot_action_prompt_main_aware_likert"
+        output["metadata"]["monitor_template"] == "cot_action_prompt_main_aware_likert"
     )
 
 
@@ -101,9 +103,7 @@ def test_likert_paths_are_isolated() -> None:
         ["cot_action"],
         prompt_variant="likert",
     )["cot_action"]
-    assert likert_input.endswith(
-        "side-all.main_aware.likert.cot_action.jsonl"
-    )
+    assert likert_input.endswith("side-all.main_aware.likert.cot_action.jsonl")
 
     likert_output = get_output_path_base(
         "bigcodebench",
@@ -118,24 +118,15 @@ def test_likert_paths_are_isolated() -> None:
         0.6,
         prompt_variant="likert",
     )
-    assert likert_output.endswith(
-        "side-all.Qwen3-32B.main_aware.likert"
-    )
+    assert likert_output.endswith("side-all.Qwen3-32B.main_aware.likert")
 
 
 def test_extract_likert_score_is_strict() -> None:
     assert extract_likert_score("<answer>1</answer>") == 1.0
     assert extract_likert_score("<answer>5</answer>") == 5.0
+    assert extract_likert_score("<answer>2</answer> later <answer>4</answer>") == 4.0
     assert (
-        extract_likert_score(
-            "<answer>2</answer> later <answer>4</answer>"
-        )
-        == 4.0
-    )
-    assert (
-        extract_likert_score(
-            "<think><answer>5</answer></think><answer>2</answer>"
-        )
+        extract_likert_score("<think><answer>5</answer></think><answer>2</answer>")
         == 2.0
     )
 

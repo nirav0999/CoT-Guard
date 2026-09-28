@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2026 UIUC Security and Privacy Lab
+#
+# SPDX-License-Identifier: Apache-2.0
+
 from pathlib import Path
 
 import yaml
@@ -5,8 +9,7 @@ import yaml
 from gen.monitor import get_monitor_input_paths, get_output_path_base
 from task_creation.for_monitor import build_monitor_records
 
-
-REPO_ROOT = Path(__file__).resolve().parents[1]
+REPO_ROOT = Path(__file__).resolve().parents[2]
 
 
 def test_few_shot_template_is_selected_and_recorded() -> None:
@@ -72,9 +75,7 @@ def test_few_shot_paths_are_isolated_from_standard_paths() -> None:
     )["cot_action"]
 
     assert standard_input.endswith("side-all.main_aware.cot_action.jsonl")
-    assert few_shot_input.endswith(
-        "side-all.main_aware.few_shot.cot_action.jsonl"
-    )
+    assert few_shot_input.endswith("side-all.main_aware.few_shot.cot_action.jsonl")
 
     common_output_args = (
         "bigcodebench",
@@ -94,9 +95,7 @@ def test_few_shot_paths_are_isolated_from_standard_paths() -> None:
     )
 
     assert standard_output.endswith("side-all.Qwen3-32B.main_aware")
-    assert few_shot_output.endswith(
-        "side-all.Qwen3-32B.main_aware.few_shot"
-    )
+    assert few_shot_output.endswith("side-all.Qwen3-32B.main_aware.few_shot")
 
 
 def test_binary_template_keeps_only_a_and_c_choices() -> None:
@@ -125,6 +124,4 @@ def test_binary_template_keeps_only_a_and_c_choices() -> None:
         ["cot_action"],
         prompt_variant="binary",
     )["cot_action"]
-    assert binary_input.endswith(
-        "side-all.main_aware.binary.cot_action.jsonl"
-    )
+    assert binary_input.endswith("side-all.main_aware.binary.cot_action.jsonl")

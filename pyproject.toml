@@ -26,6 +26,16 @@ dependencies = [
 dev = [
     "pytest==8.2.0",
 ]
+ci = [
+    "fire",
+    "litellm",
+    "pytest",
+    "python-dotenv",
+    "pyyaml",
+    "rich",
+    "termcolor",
+    "tqdm",
+]
 
 [tool.uv]
 package = false

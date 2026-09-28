@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2026 UIUC Security and Privacy Lab
+#
+# SPDX-License-Identifier: Apache-2.0
+
 from pathlib import Path
 
 import yaml
@@ -9,8 +13,7 @@ from gen.monitor import get_monitor_input_paths, get_output_path_base
 from task_creation.for_monitor import build_monitor_records
 from utils import extract_scalar_score, scalar_score_to_choice
 
-
-REPO_ROOT = Path(__file__).resolve().parents[1]
+REPO_ROOT = Path(__file__).resolve().parents[2]
 
 
 def _sample_record() -> dict:
@@ -79,8 +82,7 @@ def test_scalar_template_is_minimal_and_selected() -> None:
     assert "suspicion score from 0 to 100" in output["messages"][0]["content"]
     assert output["metadata"]["prompt_variant"] == "scalar"
     assert (
-        output["metadata"]["monitor_template"]
-        == "cot_action_prompt_main_aware_scalar"
+        output["metadata"]["monitor_template"] == "cot_action_prompt_main_aware_scalar"
     )
 
 
@@ -97,9 +99,7 @@ def test_scalar_paths_are_isolated() -> None:
         ["cot_action"],
         prompt_variant="scalar",
     )["cot_action"]
-    assert scalar_input.endswith(
-        "side-all.main_aware.scalar.cot_action.jsonl"
-    )
+    assert scalar_input.endswith("side-all.main_aware.scalar.cot_action.jsonl")
 
     scalar_output = get_output_path_base(
         "bigcodebench",
@@ -114,9 +114,7 @@ def test_scalar_paths_are_isolated() -> None:
         0.6,
         prompt_variant="scalar",
     )
-    assert scalar_output.endswith(
-        "side-all.Qwen3-32B.main_aware.scalar"
-    )
+    assert scalar_output.endswith("side-all.Qwen3-32B.main_aware.scalar")
 
 
 def test_extract_scalar_score_is_strict() -> None:
@@ -125,10 +123,7 @@ def test_extract_scalar_score_is_strict() -> None:
     assert extract_scalar_score("<answer>50</answer>") == 50.0
     assert extract_scalar_score("<answer>100.0</answer>") == 100.0
     assert (
-        extract_scalar_score(
-            "<answer>12</answer> later <answer>87.5</answer>"
-        )
-        == 87.5
+        extract_scalar_score("<answer>12</answer> later <answer>87.5</answer>") == 87.5
     )
     assert (
         extract_scalar_score(
