@@ -1,13 +1,20 @@
-# CoT-Guard
-This repo includes the training, evaluation, and data curation code for CoT-Guard. Please also check out:
+# CoT-Guard: Small Models for Strong Monitoring
 
-- [📝 Paper](https://arxiv.org/abs/2605.12746) with technical and evaluation details
-- [🤗 HuggingFace](https://huggingface.co/CoT-Guard) 4B model with SFT and RL model checkpoints
+[arXiv Paper](https://arxiv.org/abs/2605.12746) • [Models](https://huggingface.co/CoT-Guard) • [Data & Results](https://drive.google.com/drive/folders/1eOg5--gmDHXLwIt17RyGC3FHxN-17y9q?usp=drive_link)
 
-CoT-Guard will be presented at [AdvML-Frontiers × CoTMA: From Model Security to Compositional Threats in Multi-Agent AI Systems @ COLM 2026](https://advml-frontier.github.io/) as an oral presentation. It is currently under review to a full conference venue.
+[About](#about) • [Documents](#documents) • [Citation](#citation) • [Acknowledgement](#acknowledgement)
 
+**Accepted at NeurIPS 2026.**
 
-TO-DO: CLEAR ALL SECURITY WARNINGS
+**[AdvML-Frontiers × CoTMA: From Model Security to Compositional Threats in Multi-Agent AI Systems @ COLM 2026 (Oral)](https://advml-frontier.github.io/)**
+
+<a id="about"></a>
+
+## About
+
+CoT-Guard is a 4B-parameter monitor trained to detect hidden objectives in code-generation tasks using chain-of-thought and generated code. This repository contains the training, evaluation, and data curation code, with SFT and RL model checkpoints available on [Hugging Face](https://huggingface.co/CoT-Guard).
+
+Read [CoT-Guard: Small Models for Strong Monitoring](https://arxiv.org/abs/2605.12746) for the method and evaluation details.
 
 ## Environment variables
 
@@ -28,7 +35,7 @@ export PYTHONPATH=$PYTHONPATH:$(pwd)
 3. Monitor: create monitor tasks from the responses and run monitors.
 4. Score: evaluate monitor predictions.
 
-## Run Attack
+### Run Attack
 
 a) Create prompts containing the main task (`bigcodebench`), side task (`varname`), and attack policy (`baseline`):
 
@@ -42,7 +49,7 @@ b) Run the tasks with `Qwen/Qwen3-8B` on GPU 0 to generate one attack response p
 python3 gen/attack.py single --main_task=bigcodebench --side_task=varname --attack_policy=baseline --model=Qwen/Qwen3-14B --devices=0 --tp=1 --num_rollouts=5
 ```
 
-## Verify
+### Verify
 
 With Docker running:
 
@@ -52,7 +59,7 @@ python3 eval/verify_task.py --main_task=bigcodebench --side_task=varname --attac
 
 Output: `$COT_GLOBAL_DIRECTORY/results/attack/bigcodebench.varname.baseline/Qwen3-14B.5.tested.jsonl`
 
-## Monitor
+### Monitor
 
 a) Create monitor prompts from the attacks that were successful:
 
@@ -66,7 +73,7 @@ b) Run the monitor with `Qwen/Qwen3-8B`:
 python3 gen/monitor.py single --main_task=bigcodebench --side_task=varname --attack_policy=baseline --attack_model=Qwen/Qwen3-14B --attack_rollouts=5 --filter_mode=side-all --monitor_policy=main_aware --monitor_model=Qwen/Qwen3-8B --monitor_type=cot_action --devices=0 --tp=1 --num_rollouts=1
 ```
 
-## Results
+### Results
 
 Display one setting:
 
@@ -99,6 +106,15 @@ python3 gen/attack.py parallel --main_task=bigcodebench --side_tasks=varname,exi
 
 tp per N devices --> tensor parallel for vllm
 
+<a id="documents"></a>
+
+## Documents
+
+- [Paper](https://arxiv.org/abs/2605.12746): method, threat model, and evaluation.
+- [Inference pipeline](#inference-pipeline): generate attacks, verify tasks, run monitors, and score results.
+- [Training](#training): prepare data and train with SFT and RL / GRPO.
+- [Stored evaluation and results](#stored-eval-and-results): download datasets and reproduce result tables.
+- [Model checkpoints](https://huggingface.co/CoT-Guard): SFT and RL monitors.
 
 ## Training
 
@@ -152,4 +168,53 @@ bash train/rl/run_grpo.sh
 
 All our results and datasets available for download from [here](https://drive.google.com/drive/folders/1eOg5--gmDHXLwIt17RyGC3FHxN-17y9q?usp=drive_link).
 
-Place them in the `$COT_GLOBAL_DIRECTORY/datasets/` directory, and run the `python3 eval/display_table.py` to get all of the results.
+After downloading and extracting the files, place datasets under
+`$COT_GLOBAL_DIRECTORY/datasets/` and evaluation outputs under
+`$COT_GLOBAL_DIRECTORY/results/`. The display script reads outputs from
+`results/monitor/`; preserve the downloaded subdirectory structure.
+
+From the repository root, with the project environment activated, run the
+following commands. Replace the example paths below; `COT_DOWNLOAD_DIRECTORY`
+should point to the extracted folder containing `datasets/` and `results/`.
+
+```bash
+export COT_GLOBAL_DIRECTORY="/path/to/data_and_results"
+export COT_DOWNLOAD_DIRECTORY="/path/to/extracted_download"
+export PYTHONPATH="$PWD${PYTHONPATH:+:$PYTHONPATH}"
+
+mkdir -p "$COT_GLOBAL_DIRECTORY/datasets" "$COT_GLOBAL_DIRECTORY/results"
+cp -a "$COT_DOWNLOAD_DIRECTORY/datasets/." "$COT_GLOBAL_DIRECTORY/datasets/"
+cp -a "$COT_DOWNLOAD_DIRECTORY/results/." "$COT_GLOBAL_DIRECTORY/results/"
+
+# Display tables for the default evaluation settings.
+python3 eval/display_table.py
+
+# Include all configured side tasks for those settings.
+python3 eval/display_table.py --side_tasks=None
+```
+
+Use `--monitor_models`, `--attack_policy`, and `--monitor_objective` to select
+other downloaded evaluation settings; the command does not automatically
+discover every experiment. See the [results commands](#results) for an example.
+
+<a id="citation"></a>
+
+## Citation
+
+If you use CoT-Guard in your research, please cite our [paper](https://openreview.net/forum?id=mURtPVmTjF):
+
+```bibtex
+@inproceedings{diwan2026cotguard,
+  title = {CoT-Guard: Small Models for Strong Monitoring},
+  author = {Nirav Diwan and Han Wang and Berkcan Kapusuzoglu and Ramin Moradi and Supriyo Chakraborty and Giri Iyengar and Sambit Sahu and Huan Zhang and Gang Wang},
+  booktitle = {The Fortieth Annual Conference on Neural Information Processing Systems},
+  year = {2026},
+  url = {https://openreview.net/forum?id=mURtPVmTjF}
+}
+```
+
+<a id="acknowledgement"></a>
+
+## Acknowledgement
+
+We thank the developers and maintainers of [BigCodeBench](https://github.com/bigcode-project/bigcodebench), [Inspect AI](https://github.com/UKGovernmentBEIS/inspect_ai), [vLLM](https://github.com/vllm-project/vllm), [LlamaFactory](https://github.com/hiyouga/LLaMA-Factory), and [veRL](https://github.com/verl-project/verl) for the open-source tools used in this project.
