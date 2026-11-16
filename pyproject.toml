@@ -5,7 +5,7 @@ requires-python = ">=3.12,<3.13"
 dependencies = [
     "anthropic==0.71.0",
     "datasets==4.8.4",
-    "filelock==3.29.0",
+    "filelock==4.2.1",
     "fire==0.7.1",
     "google-genai==1.73.1",
     "gpustat==1.1.1",
